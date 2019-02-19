@@ -1,0 +1,215 @@
+#navigation {
+    --width: 300px;
+
+    overflow: hidden;
+    width: var(--width)
+
+}
+#navigation, #navigation * {
+    box-sizing: border-box;
+    position: relative;
+    padding: 0px;
+    margin: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+}
+
+#navigation ul {
+    list-style: none;
+    width: var(--width)
+}
+#navigation li {
+    display: block;
+    background: rgba(220,220,220,1);
+}
+#navigation li ul {
+    display: none;
+}
+
+#navigation a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    border: none;
+    background: transparent;
+}
+
+
+#navigation a:hover {
+    color: #fff;
+}
+
+#navigation li:hover {
+    background: rgba(110,110,250,1);
+    color: #fff;
+
+}
+
+#navigation .childToggle{
+    position: absolute;
+    height: 100%;
+    width: 35px;
+    display: block;
+    right: 0px;
+    top: 0px;
+    z-index: 1;
+    background: rgba(0,0,0,0.1);
+    border: none;
+}
+
+
+
+#navigation .childToggle:hover {
+
+    background: rgba(255,255,255,0.1);
+}
+
+
+#navigation .childToggle::after {
+    content: ' ';
+    display: block;
+    border-top: 1px solid rgba(0,0,0,0.5);
+    border-right:  1px solid rgba(0,0,0,0.5);
+    height: 5px;
+    width: 5px;
+    transform: rotate(45deg);
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+#navigation .childToggle:hover::after {
+    border-color: #fff;
+}
+
+#navigation button {
+    cursor: pointer;
+}
+
+#navigation .filter {
+    width: var(--width)
+}
+
+#navigation .filter input {
+    width: 100%;
+    border: 1px solid rgba(0,0,0,0.1);
+    padding: 5px;
+    padding-left: 35px;
+    padding-right: 27px;
+}
+
+#navigation .filterSubmit {
+    width: 30px;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    top: 0px;
+    left: 0px;
+    opacity: 0.2;
+    
+    padding: 0px;
+    margin: 0px;
+    border: none;
+
+    background-color: rgba(0,0,0,0.4)
+}
+#navigation .filterSubmit img {
+    
+    position: absolute;
+    width: 15px;
+    top: 8px;
+    left: 7px;
+}
+
+#navigation .filterClear {
+    width: 30px;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    top: 0px;
+    right: 0px;
+    opacity: 0.5;
+    
+    padding: 0px;
+    margin: 0px;
+    border: none;
+
+    background-color: rgba(0,0,0,0);
+    display: none;
+
+}
+
+#navigation .filterClear.show {
+    display: block;
+}
+
+#navigation .filterClear::before {
+    position: absolute;
+    content: '';
+    width: 11px;
+    height: 1px;
+    background-color: rgba(0,0,0,1);
+    top: 15px;
+    left: 10px;
+    transform: rotate(45deg)
+}
+
+#navigation .filterClear::after {
+    position: absolute;
+    content: '';
+    height: 11px;
+    width: 1px;
+    background-color: rgba(0,0,0,1);
+    left: 15px;
+    top: 10px;
+    transform: rotate(45deg)
+}
+
+
+#navigation .childUl {
+    position: absolute;
+    right: 0px;
+    top:0px;
+    transform: translate3d(var(--width),0px,0px)
+}
+
+#navigation .childUl.open {
+    display: block;
+}
+
+#navigation .menuElm {
+    width: 10000%;
+    transition: 0.25s transform;
+    position: relative;
+    display: flex
+
+}
+
+#navigation .breadCrumb {
+    background: rgba(220,220,220,1);
+    display: none;
+
+}
+#navigation .breadCrumb.show {
+    display: flex;
+}
+
+#navigation button.backToggle {
+    height: 37px;
+    width: 35px;
+    border:none;
+    background: rgba(0,0,0,0.1);
+}
+
+#navigation button.backToggle:after {
+    content: ' ';
+    display: block;
+    border-top: 1px solid rgba(0,0,0,0.5);
+    border-right:  1px solid rgba(0,0,0,0.5);
+    height: 5px;
+    width: 5px;
+    transform: rotate(225deg);
+    position: absolute;
+    left: 15px;
+    top: 15px;
+}
