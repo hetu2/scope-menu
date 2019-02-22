@@ -213,3 +213,17 @@
     left: 15px;
     top: 15px;
 }
+
+#navigation .route {
+    padding: 5px;
+    width: calc(100% - 35px);
+}
+
+#navigation .route span {
+    
+  margin-left: 5px;
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(0%, -50%);
+}

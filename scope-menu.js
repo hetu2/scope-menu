@@ -1,22 +1,66 @@
 window.onload = function() {
 
-    let nav = new ScopeMenu('navigation');
+    window.nav = new ScopeMenu('navigation',menu);
     
     console.log(nav)
 
 }
 
-const ScopeMenu = function(elmId) {
+const ScopeMenu = function(elmId,menu) {
 
     this.elm = document.getElementById(elmId);
 
     this.init = () => {
 
-        this.renderMenu(menu)
+        this.rawMenu = Object.assign([], menu); // clone to array []
+
+        this.prepareMenu()
+
+        this.renderMenu(this.rawMenu)
 
         this.renderFilter()
 
     }
+
+
+    this.flatMap = {} // flattened map with menu items
+
+    this.prepareMenu = () => {
+        
+        let recursio = (node,parent) => {
+
+            node.forEach((n)=> {
+
+                let id = ''
+
+                n.path = []
+
+                if(parent != '') {
+                    id += parent.join('/')+'/';
+                    n.path = Object.assign([], parent);
+                }
+
+                n.path.push(n.title)
+
+                id +=n.title
+
+                n.active = false
+
+                this.flatMap[id] = n // lets do MAPped 
+
+                if(n.child) {
+
+                    recursio(n.child,n.path)
+                }
+            
+            })
+
+        }
+
+        recursio(this.rawMenu,'');
+
+    }
+
 
     this.renderFilter = () => {
 
@@ -66,8 +110,6 @@ const ScopeMenu = function(elmId) {
             this.clearButton.classList.remove('show')
         }
 
-
-
         this.filter.value = val;
     }
     this.clearFilter = ()=> {
@@ -84,24 +126,13 @@ const ScopeMenu = function(elmId) {
 
         let backButton = document.createElement('button')
         backButton.classList.add('backToggle')
-        backButton.addEventListener('click',() => {
-
-            this.menuElm.querySelector('ul:last-child').remove()
-        
-            this.activeLayer = this.menuElm.querySelectorAll('ul').length-1
-
-            let move = (this.elm.offsetWidth*this.activeLayer)*-1;
-        
-            this.menuElm.style.transform = `translate3d(${move}px,0px,0px)`
-
-            this.route.pop();
-
-            this.renderBreadCrumb()
-
-        });
+        backButton.addEventListener('click',this.backToggle);
 
         this.routeElm = document.createElement('div')
         this.routeElm.classList.add('route')
+        
+        let routeSpan = document.createElement('span')
+        this.routeElm.appendChild(routeSpan)
 
         this.breadCrumb.appendChild(backButton);
         this.breadCrumb.appendChild(this.routeElm);
@@ -117,8 +148,40 @@ const ScopeMenu = function(elmId) {
 
     }
 
+   
+
+    this.backToggle = () => {
+
+        this.menuElm.querySelector('ul:last-child').remove()
+        
+        this.activeLayer = this.menuElm.querySelectorAll('ul').length-1
+
+        let move = (this.elm.offsetWidth*this.activeLayer)*-1;
+    
+        this.menuElm.style.transform = `translate3d(${move}px,0px,0px)`
+
+        let parentPath = Object.assign([], this.activeNode().path);  
+
+        parentPath.pop()
+
+        this.activePath = parentPath.join('/');
+
+        this.renderBreadCrumb()
+    }
+
+    this.childToggle = () => {
+        this.activeLayer = this.menuElm.querySelectorAll('ul').length
+
+
+        this.menuElm.appendChild(this.renderMenuLayer(this.activeNode().child))
+    }
+
     this.activeLayer=0;
-    this.route = []
+    this.activePath = ''
+    this.activeNode = ()=> {
+        
+        return this.flatMap[this.activePath]
+    }
 
     this.renderBreadCrumb = () => {
 
@@ -128,7 +191,7 @@ const ScopeMenu = function(elmId) {
         else {
             this.breadCrumb.classList.add('show')
 
-            this.routeElm.innerHTML = this.route.join(" / ")
+            this.routeElm.querySelector('span').innerHTML = this.activeNode().title
 
         }
 
@@ -168,7 +231,10 @@ const ScopeMenu = function(elmId) {
                 let childToggle = document.createElement('button');
                 childToggle.classList.add('childToggle')
                 childToggle.addEventListener('click',()=> {
-                    this.childToggle(m)
+
+                    this.activePath = m.path.join('/');
+
+                    this.childToggle();
                 })
     
                 li.appendChild(childToggle)
@@ -184,13 +250,7 @@ const ScopeMenu = function(elmId) {
 
     }
 
-    this.childToggle = (m) => {
-        this.activeLayer = this.menuElm.querySelectorAll('ul').length
-
-        this.route.push(m.title)
-
-        this.menuElm.appendChild(this.renderMenuLayer(m.child))
-    }
+    
 
 
     this.init()
@@ -216,62 +276,59 @@ const menu = [ // menuObject
                 title: 'consectetur',
                 url: '#producst/consectetur',
             }, {
-                title: ' adipiscing elit. ',
+                title: 'Adipiscing elit',
                 url: '#producst/adipiscing elit',
             }, {
-                title: 'Nulla auctor nisl ',
+                title: 'Nulla auctor nisl',
                 url: '#producst/Nulla auctor nisl',
                 child: [
                     {
-                        title: 'kolmas taso',
-                        url: 'dsa'
+                        title: 'kolmas taso 1',
+                        url: '#dsa'
                     },
                     {
-                        title: 'kolmas taso',
-                        url: 'dsa'
+                        title: 'kolmas taso 2',
+                        url: '#dsa'
                     },{
-                        title: 'kolmas taso',
-                        url: 'dsa'
+                        title: 'kolmas taso 3',
+                        url: '#dsa'
                     },{
-                        title: 'kolmas taso',
-                        url: 'dsa',
+                        title: 'kolmas taso 4',
+                        url: '#dsa',
                         child: [
                             {
-                                title: 'neljäs taso',
-                                url: 'dsa'
+                                title: 'neljäs taso 1',
+                                url: '#dsa'
                             }
                         ]
                     }
                 ]
             }, {
-                title: 'sit amet ligula blandit ',
+                title: 'sit amet ligula blandit',
                 url: '#producst/sit amet ligula blandit',
             }, {
                 title: ' vehicula. Vestibulum',
                 url: '#producst/vehicula. Vestibulum',
                 child: [
                     {
-                        title: 'kolmas taso',
-                        url: 'dsa'
+                        title: 'kolmas taso 1',
+                        url: '#dsa'
                     }
                 ]
             }
         ]
-
-        
     },
     {
         title: 'Peoples',
         url: '#peoples',
-
         child: [
             {
                 title:'Matti Meikäläinen',
-                url: 'matti meikäläinen'
+                url: '#matti meikäläinen'
             },
             {
                 title:'Maija Malinen',
-                url: 'maija malinen'
+                url: '#maija malinen'
             }
         ]
     },
