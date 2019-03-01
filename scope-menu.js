@@ -1,3 +1,4 @@
+"use strict"
 window.onload = function() {
 
     window.nav = new ScopeMenu('navigation',menu);
@@ -18,10 +19,11 @@ const ScopeMenu = function(elmId,menu) {
 
         this.renderMenu(this.rawMenu)
 
-        this.renderFilter()
+        this.renderFilter();
+
+
 
     }
-
 
     this.flatMap = {} // flattened map with menu items
 
@@ -44,7 +46,7 @@ const ScopeMenu = function(elmId,menu) {
 
                 id +=n.title
 
-                n.active = false
+                n.active = 0
 
                 this.flatMap[id] = n // lets do MAPped 
 
@@ -128,7 +130,7 @@ const ScopeMenu = function(elmId,menu) {
         backButton.classList.add('backToggle')
         backButton.addEventListener('click',this.backToggle);
 
-        this.routeElm = document.createElement('div')
+        this.routeElm = document.createElement('a')
         this.routeElm.classList.add('route')
         
         let routeSpan = document.createElement('span')
@@ -146,9 +148,20 @@ const ScopeMenu = function(elmId,menu) {
 
         this.elm.appendChild(this.menuElm);
 
+        window.addEventListener("hashchange", ()=> {
+            
+            const hash = decodeURI(window.location.hash);
+
+            const node = this.getNodeByURL(hash);
+
+            if(!Object.keys(node).length) return false;
+            
+            console.log(node)
+            
+        });
+    
     }
 
-   
 
     this.backToggle = () => {
 
@@ -172,12 +185,11 @@ const ScopeMenu = function(elmId,menu) {
     this.childToggle = () => {
         this.activeLayer = this.menuElm.querySelectorAll('ul').length
 
-
         this.menuElm.appendChild(this.renderMenuLayer(this.activeNode().child))
     }
 
     this.activeLayer=0;
-    this.activePath = ''
+    this.activePath = '';
     this.activeNode = ()=> {
         
         return this.flatMap[this.activePath]
@@ -191,6 +203,8 @@ const ScopeMenu = function(elmId,menu) {
         else {
             this.breadCrumb.classList.add('show')
 
+            this.routeElm.href = this.activeNode().url
+
             this.routeElm.querySelector('span').innerHTML = this.activeNode().title
 
         }
@@ -198,17 +212,15 @@ const ScopeMenu = function(elmId,menu) {
     }
 
     
- 
-
     this.renderMenuLayer = (nodes)=> {
+
+        this.pendActiveClasses();
 
         let move = (this.elm.offsetWidth*this.activeLayer)*-1;
         
         this.menuElm.style.transform = `translate3d(${move}px,0px,0px)`
 
-
         let ul = document.createElement('ul')
-
             
         nodes.forEach((m) => {
             
@@ -219,11 +231,24 @@ const ScopeMenu = function(elmId,menu) {
                 a = document.createElement('a')
                 a.setAttribute('href',m.url)
             }
-        
+            
             a.innerHTML = m.title;
     
             let li = document.createElement('li')
+
+            if(m.active == 1) {
+                li.classList.add('active_path')
+            } else if(m.active == 2) {
+                li.classList.add('active_node')
+            }
+            else {
+
+                li.classList.remove('active_path')
+                li.classList.remove('active_node')
+
+            }
     
+
             li.appendChild(a)
     
             if(m.child) {
@@ -250,8 +275,58 @@ const ScopeMenu = function(elmId,menu) {
 
     }
 
+    this.selectedNode = {}
     
+    this.pendActiveClasses = () => {
 
+        let uri = decodeURI(window.location.href)
+
+        let origin = window.location.origin+'/';
+        
+        for(const k in this.flatMap) {
+            const m = this.flatMap[k];
+
+            m.active = 0;
+
+            if(uri == origin+m.url) {
+
+                let activePath = ''
+
+                m.path.forEach((p) => {
+                    
+                    if(activePath) {
+                        activePath += '/'
+                    }
+
+                    activePath += p
+
+                    this.flatMap[activePath].active = 1
+
+                });
+
+                m.active = 2;
+                this.selectedNode = m;
+            }
+        }
+    }
+
+    this.getNodeByURL = (uri) => {
+
+        let rtn = {}
+
+        for(const k in this.flatMap) {
+            const m = this.flatMap[k];
+
+            if(uri == m.url) {
+
+                rtn = m;
+
+            }
+        }
+
+        return rtn;
+
+    }
 
     this.init()
 
@@ -263,7 +338,7 @@ const ScopeMenu = function(elmId,menu) {
 const menu = [ // menuObject
     {
         title: 'Home',
-        url: '#home'
+        url: '/'
     },
     {
         title: 'Products',
@@ -284,21 +359,21 @@ const menu = [ // menuObject
                 child: [
                     {
                         title: 'kolmas taso 1',
-                        url: '#dsa'
+                        url: '#producst/Nulla auctor nisl/kolmas taso 1'
                     },
                     {
                         title: 'kolmas taso 2',
-                        url: '#dsa'
+                        url: '#producst/Nulla auctor nisl/kolmas taso 2'
                     },{
                         title: 'kolmas taso 3',
-                        url: '#dsa'
+                        url: '#producst/Nulla auctor nisl/kolmas taso 3'
                     },{
                         title: 'kolmas taso 4',
-                        url: '#dsa',
+                        url: '#producst/Nulla auctor nisl/kolmas taso 4',
                         child: [
                             {
                                 title: 'neljäs taso 1',
-                                url: '#dsa'
+                                url: '#producst/Nulla auctor nisl/kolmas taso 4/neljäs taso 1'
                             }
                         ]
                     }
@@ -312,7 +387,7 @@ const menu = [ // menuObject
                 child: [
                     {
                         title: 'kolmas taso 1',
-                        url: '#dsa'
+                        url: '#producst/vehicula. Vestibulum/kolmas taso 1'
                     }
                 ]
             }

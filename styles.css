@@ -37,12 +37,12 @@
 
 #navigation a:hover {
     color: #fff;
+    background: rgba(110,110,250,1);
+
 }
 
 #navigation li:hover {
-    background: rgba(110,110,250,1);
-    color: #fff;
-
+    background: #ccc;
 }
 
 #navigation .childToggle{
@@ -53,7 +53,7 @@
     right: 0px;
     top: 0px;
     z-index: 1;
-    background: rgba(0,0,0,0.1);
+    background: #ccc;
     border: none;
 }
 
@@ -61,7 +61,7 @@
 
 #navigation .childToggle:hover {
 
-    background: rgba(255,255,255,0.1);
+    background: rgba(110,110,250,1);
 }
 
 
@@ -187,11 +187,15 @@
 
 #navigation .breadCrumb {
     background: rgba(220,220,220,1);
-    display: none;
+    display: flex;
+    height: 0px;
+    opacity: 0;
+    transition: all 0.1s;
 
 }
 #navigation .breadCrumb.show {
-    display: flex;
+    height: 37px;
+    opacity: 1;
 }
 
 #navigation button.backToggle {
@@ -199,6 +203,11 @@
     width: 35px;
     border:none;
     background: rgba(0,0,0,0.1);
+}
+
+#navigation button.backToggle:hover {
+
+    background: rgba(110,110,250,1);
 }
 
 #navigation button.backToggle:after {
@@ -214,16 +223,37 @@
     top: 15px;
 }
 
+#navigation button.backToggle:hover:after {
+    border-color: #fff;
+}
+
 #navigation .route {
     padding: 5px;
     width: calc(100% - 35px);
+    position: relative;
+    font-weight: bold;
+}
+
+#navigation .route:hover {
+    background: rgba(110,110,250,1);
+    color: #fff;
 }
 
 #navigation .route span {
     
-  margin-left: 5px;
-  position: absolute;
-  top: 50%;
-  left: 0%;
-  transform: translate(0%, -50%);
+    padding: 0px;
+    margin-left: 10px;
+    position: absolute;
+    top: 50%;
+    left: 0%;
+    transform: translate(0%, -50%);
+}
+
+#navigation li.active_path {
+    font-weight: bold;
+}
+
+#navigation li.active_node a {
+    font-weight: bold;
+    text-decoration: underline;
 }
