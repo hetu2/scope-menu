@@ -17,11 +17,9 @@ const ScopeMenu = function(elmId,menu) {
 
         this.prepareMenu()
 
-        this.renderMenu(this.rawMenu)
+        this.renderMenu()
 
         this.renderFilter();
-
-
 
     }
 
@@ -121,7 +119,7 @@ const ScopeMenu = function(elmId,menu) {
     }
 
 
-    this.renderMenu = (nodes)=> {
+    this.renderMenu = ()=> {
 
         this.breadCrumb = document.createElement('div')
         this.breadCrumb.classList.add('breadCrumb')
@@ -144,7 +142,7 @@ const ScopeMenu = function(elmId,menu) {
         this.menuElm.classList.add('menuElm')
         this.menuElm.style.transform = `translate3d(0px,0px,0px)`
     
-        this.menuElm.appendChild(this.renderMenuLayer(nodes))
+        this.menuElm.appendChild(this.renderMenuLayer(this.rawMenu))
 
         this.elm.appendChild(this.menuElm);
 
@@ -155,8 +153,36 @@ const ScopeMenu = function(elmId,menu) {
             const node = this.getNodeByURL(hash);
 
             if(!Object.keys(node).length) return false;
+
+            this.menuElm.innerHTML = '';
+
             
-            console.log(node)
+            const parents = Object.assign([], node.path);  
+            parents.pop()
+            this.activeLayer=parents.length;
+            
+            this.menuElm.appendChild(this.renderMenuLayer(this.rawMenu))
+
+            if(parents.length) {
+
+                let path = ''
+
+                parents.forEach((p)=> {
+
+                    if(path) {
+                        path += '/'
+                    }
+                    path += p
+
+
+                    const parentNode = this.flatMap[path]
+
+                    this.menuElm.appendChild(this.renderMenuLayer(parentNode.child))
+            
+                })
+
+            }
+            
             
         });
     
