@@ -1,13 +1,7 @@
+(function () {
 "use strict"
-window.onload = function() {
 
-    window.nav = new ScopeMenu('navigation',menu);
-    
-    console.log(nav)
-
-}
-
-const ScopeMenu = function(elmId,menu) {
+window['ScopeMenu'] = function(elmId,menu) {
 
     this.elm = document.getElementById(elmId);
 
@@ -148,44 +142,55 @@ const ScopeMenu = function(elmId,menu) {
 
         window.addEventListener("hashchange", ()=> {
             
-            const hash = decodeURI(window.location.hash);
 
-            const node = this.getNodeByURL(hash);
-
-            if(!Object.keys(node).length) return false;
-
-            this.menuElm.innerHTML = '';
-
-            
-            const parents = Object.assign([], node.path);  
-            parents.pop()
-            this.activeLayer=parents.length;
-            
-            this.menuElm.appendChild(this.renderMenuLayer(this.rawMenu))
-
-            if(parents.length) {
-
-                let path = ''
-
-                parents.forEach((p)=> {
-
-                    if(path) {
-                        path += '/'
-                    }
-                    path += p
-
-
-                    const parentNode = this.flatMap[path]
-
-                    this.menuElm.appendChild(this.renderMenuLayer(parentNode.child))
-            
-                })
-
-            }
+            this.renderCurrentPathByUri()
             
             
         });
-    
+        this.renderCurrentPathByUri()
+    }
+
+    this.renderCurrentPathByUri = () => {
+
+        let hash = decodeURI(window.location.pathname);
+
+        if(window.location.hash) {
+            hash = decodeURI(window.location.hash);
+        }
+       
+        const node = this.getNodeByURL(hash);
+
+        if(!Object.keys(node).length) return false;
+
+        this.menuElm.innerHTML = '';
+            
+        const parents = Object.assign([], node.path);  
+        parents.pop()
+        this.activeLayer=parents.length;
+        this.activePath = parents.join('/');
+
+        
+        this.menuElm.appendChild(this.renderMenuLayer(this.rawMenu))
+
+        if(parents.length) {
+
+            let path = ''
+
+            parents.forEach((p)=> {
+
+                if(path) {
+                    path += '/'
+                }
+                path += p
+
+
+                const parentNode = this.flatMap[path]
+
+                this.menuElm.appendChild(this.renderMenuLayer(parentNode.child))
+        
+            })
+
+        }
     }
 
 
@@ -223,13 +228,14 @@ const ScopeMenu = function(elmId,menu) {
 
     this.renderBreadCrumb = () => {
 
+
         if(!this.activeLayer) {
             this.breadCrumb.classList.remove('show')
         }
         else {
             this.breadCrumb.classList.add('show')
 
-            this.routeElm.href = this.activeNode().url
+            this.routeElm.href =  this.activeNode().url
 
             this.routeElm.querySelector('span').innerHTML = this.activeNode().title
 
@@ -307,7 +313,12 @@ const ScopeMenu = function(elmId,menu) {
 
         let uri = decodeURI(window.location.href)
 
-        let origin = window.location.origin+'/';
+        let origin = window.location.origin;
+
+
+        if(window.location.hash) {
+            origin += '/'
+        } 
         
         for(const k in this.flatMap) {
             const m = this.flatMap[k];
@@ -359,85 +370,7 @@ const ScopeMenu = function(elmId,menu) {
     return this
 
 }
-
-
-const menu = [ // menuObject
-    {
-        title: 'Home',
-        url: '/'
-    },
-    {
-        title: 'Products',
-        url: '#producst',
-        child: [
-            {
-                title: 'Lorem ipsum',
-                url: '#producst/Lorem ipsum',
-            }, {
-                title: 'consectetur',
-                url: '#producst/consectetur',
-            }, {
-                title: 'Adipiscing elit',
-                url: '#producst/adipiscing elit',
-            }, {
-                title: 'Nulla auctor nisl',
-                url: '#producst/Nulla auctor nisl',
-                child: [
-                    {
-                        title: 'kolmas taso 1',
-                        url: '#producst/Nulla auctor nisl/kolmas taso 1'
-                    },
-                    {
-                        title: 'kolmas taso 2',
-                        url: '#producst/Nulla auctor nisl/kolmas taso 2'
-                    },{
-                        title: 'kolmas taso 3',
-                        url: '#producst/Nulla auctor nisl/kolmas taso 3'
-                    },{
-                        title: 'kolmas taso 4',
-                        url: '#producst/Nulla auctor nisl/kolmas taso 4',
-                        child: [
-                            {
-                                title: 'neljäs taso 1',
-                                url: '#producst/Nulla auctor nisl/kolmas taso 4/neljäs taso 1'
-                            }
-                        ]
-                    }
-                ]
-            }, {
-                title: 'sit amet ligula blandit',
-                url: '#producst/sit amet ligula blandit',
-            }, {
-                title: ' vehicula. Vestibulum',
-                url: '#producst/vehicula. Vestibulum',
-                child: [
-                    {
-                        title: 'kolmas taso 1',
-                        url: '#producst/vehicula. Vestibulum/kolmas taso 1'
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        title: 'Peoples',
-        url: '#peoples',
-        child: [
-            {
-                title:'Matti Meikäläinen',
-                url: '#matti meikäläinen'
-            },
-            {
-                title:'Maija Malinen',
-                url: '#maija malinen'
-            }
-        ]
-    },
-    {
-        title: 'Contact us',
-        url: '#Contact us'
-    }
-]
+})();
 
 
 
