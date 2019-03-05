@@ -71,7 +71,7 @@ window['ScopeMenu'] = function(elmId,menu) {
 
         
         let icon = document.createElement('img')
-        icon.src = 'filter.svg'
+        icon.src = '/filter.svg'
 
         let button = document.createElement('button')
         button.type = 'submit'
